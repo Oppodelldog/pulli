@@ -1,11 +1,18 @@
 package pulli
 
-import "regexp"
+import (
+	"regexp"
+)
 
 const filterModeWhiteList = "whitelist"
 const filterModeBlackList = "blacklist"
 
 func newFilter(filters []string, filterMode string) *filter {
+
+	if filterMode == "" {
+		filterMode = filterModeBlackList
+	}
+
 	regExFilters := buildRegExMatchers(filters)
 
 	return &filter{

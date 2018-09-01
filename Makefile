@@ -29,8 +29,20 @@ lint: ## Run all the linters
 		--deadline=10m \
 		./... | grep -v "mocks"
 
+test: ## Run all the tests
+	rm -f coverage.tmp && rm -f coverage.txt
+	echo 'mode: atomic' > coverage.txt && go list ./... | xargs -n1 -I{} sh -c 'go test -race -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt' && rm coverage.tmp
+
+ci: ## Run all the tests and code checks
+	dep ensure
+	go get ./...
+	make test
+	# goveralls -service drone.io -repotoken Hnq7byXbwVH2lKmNnrV0svSn8P6UOV9vZ
+	go build src/cmd/main.go
+
 build: ## build binary to .build folder
-	go build -o ".build/pulli" main.go
+	rm -f .build/*
+	go build -o ".build/pulli" src/cmd/main.go
 
 install: ## Install to <gopath>/src
 	go install ./...

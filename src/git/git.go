@@ -8,11 +8,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const defaultExecutionTimeout = 3 * time.Second
+const defaultExecutionTimeout = 20 * time.Second
 
-type execFuncDef func(ctx context.Context, s1 string, s2 ...string) *exec.Cmd
+type execWithTimeoutFuncDef func(ctx context.Context, s1 string, s2 ...string) *exec.Cmd
 
-var execFunc = execFuncDef(exec.CommandContext)
+var execFunc = execWithTimeoutFuncDef(exec.CommandContext)
 
 func git(dir string, s ...string) (string, error) {
 

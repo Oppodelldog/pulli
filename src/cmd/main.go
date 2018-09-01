@@ -2,20 +2,14 @@ package main
 
 import (
 	"flag"
-
-	"github.com/Oppodelldog/pulli"
-	"github.com/Oppodelldog/pulli/version"
+	"github.com/Oppodelldog/pulli/src/pulli"
+	"github.com/Oppodelldog/pulli/src/version"
 	"github.com/sirupsen/logrus"
-	"github.com/x-cray/logrus-prefixed-formatter"
-	)
+	"os"
+)
 
 func main() {
-	logrus.SetFormatter(&prefixed.TextFormatter{
-		ForceFormatting: true,
-		ForceColors:     true,
-		SpacePadding:    12,
-	})
-	logrus.SetLevel(logrus.DebugLevel)
+	pulli.InitLogging()
 	logrus.Infof("pulli (%v)", version.Number)
 
 	var searchRoot string
@@ -31,7 +25,9 @@ func main() {
 
 	logrus.SetLevel(logrus.Level(logLevel))
 
-	pulli.ValidateFlags(searchRoot, filterMode)
+	if ok := pulli.ValidateFlags(searchRoot, filterMode, filters); !ok {
+		os.Exit(1)
+	}
 
 	pulli.PullAll(searchRoot, filters, filterMode)
 }

@@ -1,0 +1,10 @@
+workspace:
+  base: /go/src/github.com/Oppodelldog/pulli
+  path: /
+
+pipeline:
+  build:
+    image: oppodelldog/droxy:latest
+    pull: true
+    commands:
+      - make ci

@@ -22,11 +22,11 @@ else
 fi
 
 target_folder=".release"
-package="github.com/Oppodelldog/pulli"
-ldflags=-ldflags="-X github.com/Oppodelldog/pulli/version.Number=${tag}"
+package="github.com/Oppodelldog/pulli/src/cmd"
+ldflags=-ldflags="-X github.com/Oppodelldog/pulli/src/version.Number=${tag}"
 
 package_split=(${package//\// })
-package_name=${package_split[-1]}
+output_name=pulli
 
 platforms=("linux/amd64" "windows/amd64" "windows/386" "linux/arm/7")
 
@@ -43,7 +43,6 @@ do
     fi
 
     output_folder="${GOOS}-${GOARCH}${GOARM}"
-    output_name=${package_name}
     if [ ${GOOS} = "windows" ]; then
         output_name+='.exe'
     fi
