@@ -51,12 +51,20 @@ pulli -dir /tmp/some-directory
 ```
 
 ### Behavior
-Q: "So it is called pulli, what is it for?"
+**Rambo-like explanation:**
 
-A: "It's for pulling"
+Q: "And this, what is this?"
 
-Seriously,
-basically it just walks through the filesystem searching for git repositories.
+A: "It's pulli"
+
+Q: "What does it do?"
+
+A: "It pulls"
+
+
+**Seriously:**
+
+Pulli walks through the filesystem searching for git repositories.
 
 When a repo is found and it passed the filters a **git pull** is executed.
 
