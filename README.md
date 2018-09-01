@@ -51,15 +51,16 @@ pulli -dir /tmp/some-directory
 ```
 
 ### Behavior
-So what does pulli really do?
+Q: "So it is called pulli, what is it for?"
 
-**fetch** and **pull**
+A: "It's for pulling"
 
-So basically it just walks through the filesystem searching for git repositories.
+Seriously,
+basically it just walks through the filesystem searching for git repositories.
 
-When a repo is found (and passed the filters) a **git pull**.
+When a repo is found and it passed the filters a **git pull** is executed.
 
-So the only change that is made to the working tree might be a **fast-forward merge** during pull.
+So the only change that might be made to the working tree could be a **fast-forward merge** from ```git pull```.
 
 
 ### fun fact
