@@ -1,5 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/Oppodelldog/pulli)](https://goreportcard.com/report/github.com/Oppodelldog/pulli)
-[![Linux build](http://nulldog.de:12080/api/badges/Oppodelldog/pulli/status.svg)](http://nulldog.de:12080/Oppodelldog/pulli)
+[![Build Status](https://travis-ci.com/Oppodelldog/pulli.svg?branch=master)](https://travis-ci.com/Oppodelldog/pulli)
 # pulli
 > pulli pulls git repos recursively
 
