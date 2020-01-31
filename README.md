@@ -24,8 +24,6 @@ Usage of pulli:
     	filters the given folder. (can be absolute path or regex)
   -filtermode string
     	whitelist or blacklist
-  -loglevel int
-    	0=panic, 1=fatal, 2=error, 3=warn, 4=info, 5=debug (default 4)
 ```
 
 ### Examples
