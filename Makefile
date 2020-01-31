@@ -29,16 +29,14 @@ lint: ## Run all the linters
 		--deadline=10m \
 		./... | grep -v "mocks"
 
-test: ## Run all the tests
+test-with-coverage: ## Run all the tests
 	rm -f coverage.tmp && rm -f coverage.txt
 	echo 'mode: atomic' > coverage.txt && go list ./... | xargs -n1 -I{} sh -c 'go test -race -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt' && rm coverage.tmp
 
-ci: ## Run all the tests and code checks
-	dep ensure
-	go get ./...
-	make test
-	# goveralls -service drone.io -repotoken Hnq7byXbwVH2lKmNnrV0svSn8P6UOV9vZ
-	go build src/cmd/main.go
+test: ## Run all the tests
+	go version
+	go env
+	go list ./... | xargs -n1 -I{} sh -c 'go test -race {}'
 
 build: ## build binary to .build folder
 	rm -f .build/*
