@@ -1,12 +1,11 @@
 package pulli
 
 import (
+	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/Oppodelldog/pulli/src/git"
-	"github.com/sirupsen/logrus"
 )
 
 // PullAll finds git repositories and pulls if the filters allow to.
@@ -18,7 +17,6 @@ func PullAll(searchRoot string, filters []string, filterMode string) {
 
 		if repoDir, ok := checkForGitRepoDir(path); ok {
 			if filter.isAllowed(repoDir) {
-				setRepoNameForLogging(repoDir, searchRoot)
 				pullRepo(repoDir)
 			}
 		}
@@ -27,27 +25,27 @@ func PullAll(searchRoot string, filters []string, filterMode string) {
 	})
 
 	if err != nil {
-		logrus.Fatalf("error while walking filesystem: %v", err)
+		log.Fatalf("error while walking filesystem: %v", err)
 	}
 }
 
 func pullRepo(repoDir string) {
 
-	logrus.Debugf("pulling %v", repoDir)
+	log.Printf("pulling %v", repoDir)
 	branchName, err := git.GetCurrentBranchName(repoDir)
 	if err != nil {
-		log.newEntry().Errorf("unable top read branch name: %v", err)
+		log.Printf("unable top read branch name: %v", err)
 		return
 	}
 
 	result, err := git.Pull(repoDir)
 	if err != nil {
-		log.newEntry().WithField("branch", branchName).Errorf("error while pulling: %v :%v", err, truncateString(result, 50))
-		log.newEntry().WithField("branch", branchName).Debug(result)
+		log.Printf("%s: error while pulling: %v :%v", branchName, err, truncateString(result, 50))
+		log.Printf("%s: %v", branchName, result)
 		return
 	}
 
-	log.newEntry().WithField("branch", branchName).Infof("pulled")
+	log.Printf("%s: pulled", branchName)
 }
 
 func checkForGitRepoDir(path string) (string, bool) {
@@ -59,8 +57,4 @@ func checkForGitRepoDir(path string) (string, bool) {
 	}
 
 	return "", false
-}
-
-func setRepoNameForLogging(repoDir string, searchRoot string) {
-	log.currentRepoDisplayName = strings.Replace(repoDir, searchRoot, "", -1)
 }

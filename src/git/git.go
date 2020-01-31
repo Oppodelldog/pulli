@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/Oppodelldog/pulli/log"
 )
 
 const defaultExecutionTimeout = 20 * time.Second
@@ -21,7 +21,7 @@ func git(dir string, s ...string) (string, error) {
 	defer func() {
 		err := ctx.Err()
 		if err != nil {
-			logrus.Error(err)
+			log.Printf("error executing git: %v", err)
 		}
 	}()
 

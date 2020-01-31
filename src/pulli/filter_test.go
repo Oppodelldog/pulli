@@ -1,19 +1,24 @@
 package pulli
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
 func TestFilter_newFilter(t *testing.T) {
-	assert.IsType(t, &filter{}, newFilter([]string{}, filterModeBlackList))
+	expected := reflect.ValueOf(&filter{}).Type()
+	got := reflect.ValueOf(newFilter([]string{}, filterModeBlackList)).Type()
+	if expected != got {
+		t.Fatalf("expected newFilte to return %T, but got: %T", expected, got)
+	}
 }
 
 func TestFilter_newFilter_emptyFilterMode_defaultsToBlacklist(t *testing.T) {
 	f := newFilter([]string{}, "")
 
-	assert.Exactly(t, filterModeBlackList, f.filterMode)
+	if f.filterMode != filterModeBlackList {
+		t.Fatalf("filterMode was expected to be %v, but was: %v", filterModeBlackList, f.filterMode)
+	}
 }
 
 func TestFilter_isAllowed(t *testing.T) {
@@ -104,7 +109,9 @@ func TestFilter_isAllowed(t *testing.T) {
 				f := newFilter(testData.filters, testData.filterMode)
 				result := f.isAllowed(input)
 
-				assert.Exactly(t, testData.expectedResult, result, fmt.Sprintf("inputIndex: %v", inputIndex))
+				if testData.expectedResult != result {
+					t.Fatalf("inputIndex: %v, expected %v, got: %v", inputIndex, testData.expectedResult, result)
+				}
 			}
 		})
 	}

@@ -2,11 +2,10 @@ package git
 
 import (
 	"os/exec"
+	"reflect"
 	"testing"
 
 	"context"
-
-	"github.com/stretchr/testify/assert"
 )
 
 var originals = struct {
@@ -40,8 +39,13 @@ func TestGetCurrentBranchName_FindsBranchInCommandOutput(t *testing.T) {
 			execFunc = createExecCommandMock(t, testCase.gitBranchOutput, testCase.gitLogOutput)
 			path := "/tmp"
 			branchName, err := GetCurrentBranchName(path)
-			assert.NoError(t, err)
-			assert.Exactly(t, testCase.expectedBranchName, branchName)
+			if err != nil {
+				t.Fatalf("expected no error, but got: %v", err)
+			}
+
+			if testCase.expectedBranchName != branchName {
+				t.Fatalf("expected branch: %v, but got: %v", testCase.expectedBranchName, branchName)
+			}
 		})
 	}
 }
@@ -75,9 +79,14 @@ func TestGetCurrentBranchName_ExpectGitCommandIsCalledProperly(t *testing.T) {
 	defer restoreOriginals()
 
 	execFunc = func(c context.Context, s1 string, s2 ...string) *exec.Cmd {
-		assert.Exactly(t, "git", s1)
-		assert.Equal(t, []string{"branch", "log"}, s2)
-
+		const expectedS1 = "git"
+		if s1 != expectedS1 {
+			t.Fatalf("expected s1 to be %v, but was: %v", expectedS1, s1)
+		}
+		expectedS2 := []string{"branch", "log"}
+		if reflect.DeepEqual(expectedS2, s2) {
+			t.Fatalf("expected s2 to be %v, but was: %v", expectedS2, s2)
+		}
 		return exec.Command("", "")
 	}
 
@@ -92,7 +101,9 @@ func TestGetCurrentBranchName_ReturnsErrorFromOneOfBothPossibleCommandExecutions
 			execFunc = createExecFuncErrorStub(i)
 
 			_, err := GetCurrentBranchName("test-folder")
-			assert.Error(t, err)
+			if err == nil {
+				t.Fatal("expected error, but got nil")
+			}
 		})
 	}
 }
@@ -110,5 +121,9 @@ func createExecFuncErrorStub(errorCommandAtCall int) execWithTimeoutFuncDef {
 }
 
 func TestDefaultExecFuncIsExecCommand(t *testing.T) {
-	assert.IsType(t, execWithTimeoutFuncDef(exec.CommandContext), execFunc)
+	expectedType := reflect.ValueOf(execWithTimeoutFuncDef(exec.CommandContext)).Type()
+	execFuncType := reflect.ValueOf(execFunc).Type()
+	if expectedType != execFuncType {
+		t.Fatalf("expected execFunc to be opf type %T, but was %T", expectedType, execFuncType)
+	}
 }

@@ -1,7 +1,6 @@
 package pulli
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -63,8 +62,9 @@ func TestHelper_truncateString(t *testing.T) {
 	for testCaseName, testData := range testDataSet {
 		t.Run(testCaseName, func(t *testing.T) {
 			result := truncateString(testData.input, testData.limit)
-			assert.Exactly(t, testData.expected, result)
+			if testData.expected != result {
+				t.Fatalf("expected: %v, got:%v", testData.expected, result)
+			}
 		})
 	}
-
 }

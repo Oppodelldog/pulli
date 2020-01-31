@@ -1,12 +1,12 @@
 package pulli
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
-	"github.com/stretchr/testify/assert"
+	"errors"
 	"os"
 	"path"
 	"testing"
+
+	"github.com/Oppodelldog/pulli/log"
 )
 
 func TestValidateFlags(t *testing.T) {
@@ -20,67 +20,105 @@ func TestValidateFlags(t *testing.T) {
 		filters          []string
 		filterMode       string
 		expectedResult   bool
-		expectedLogEntry *logrus.Entry
+		expectedLogInput loggerInput
 	}{
 		"searchRoot does not exist": {
-			searchRoot: "/DOES-NOT_EXIST",
-			expectedLogEntry: &logrus.Entry{
-				Message: "error investigating -dir '/DOES-NOT_EXIST': stat /DOES-NOT_EXIST: no such file or directory",
-				Level:   logrus.ErrorLevel,
-			},
-			expectedResult: false,
+			searchRoot:       "/DOES-NOT_EXIST",
+			expectedLogInput: loggerInput{format: "error investigating -dir '%s': %v", v: []interface{}{"/DOES-NOT_EXIST", &os.PathError{Op: "stat", Path: "/DOES-NOT_EXIST", Err: errors.New("no such file or directory")}}},
+			expectedResult:   false,
 		},
 		"searchRoot is no directory": {
-			searchRoot: testFile,
-			expectedLogEntry: &logrus.Entry{
-				Message: "-dir '/tmp/pulli/flagvalidation/testFile': is not a directory",
-				Level:   logrus.ErrorLevel,
-			},
-			expectedResult: false,
+			searchRoot:       testFile,
+			expectedLogInput: loggerInput{format: "-dir '%s': is not a directory"},
+			expectedResult:   false,
 		},
 		"searchRoot is valid, filters and filemode is empty, ok": {
 			searchRoot:     testDir,
 			expectedResult: true,
 		},
 		"searchRoot is valid, with filter set, empty filemode is not allowed": {
-			searchRoot: testDir,
-			filters:    []string{"some-filter"},
-			filterMode: "",
-			expectedLogEntry: &logrus.Entry{
-				Message: "filtermode must be either 'whitelist' or 'blacklist'",
-				Level:   logrus.ErrorLevel,
-			},
-			expectedResult: false,
+			searchRoot:       testDir,
+			filters:          []string{"some-filter"},
+			filterMode:       "",
+			expectedLogInput: loggerInput{format: "filtermode must be either '%s' or '%s'", v: []interface{}{"/tmp/pulli/flagvalidation/testFile"}},
+			expectedResult:   false,
 		},
 		"searchRoot is valid and filemode (whitelist) is allowed": {
-			searchRoot:       testDir,
-			filters:          []string{"some-filter"},
-			filterMode:       filterModeWhiteList,
-			expectedLogEntry: nil,
-			expectedResult:   true,
+			searchRoot:     testDir,
+			filters:        []string{"some-filter"},
+			filterMode:     filterModeWhiteList,
+			expectedResult: true,
 		},
 		"searchRoot is valid and filemode (blacklist) is allowed": {
-			searchRoot:       testDir,
-			filters:          []string{"some-filter"},
-			filterMode:       filterModeBlackList,
-			expectedLogEntry: nil,
-			expectedResult:   true,
+			searchRoot:     testDir,
+			filters:        []string{"some-filter"},
+			filterMode:     filterModeBlackList,
+			expectedResult: true,
 		},
 	}
-
-	logHook := test.NewLocal(logrus.StandardLogger())
 
 	for testName, testData := range testCases {
 		t.Run(testName, func(t *testing.T) {
+			logMock := new(loggerMock)
+			log.SetPrintf(logMock.Printf)
+			log.SetFatalf(logMock.Fatalf)
+
 			result := ValidateFlags(testData.searchRoot, testData.filterMode, testData.filters)
 
-			assert.Exactly(t, testData.expectedResult, result)
-			if testData.expectedLogEntry != nil {
-				assert.Exactly(t, testData.expectedLogEntry.Level, logHook.LastEntry().Level)
-				assert.Exactly(t, testData.expectedLogEntry.Message, logHook.LastEntry().Message)
+			if testData.expectedResult != result {
+				t.Fatalf("result should have been %v, but was: %v", testData.expectedResult, result)
+			}
+
+			latestLogInput := logMock.GetLatestPrintf()
+			if testData.expectedLogInput.format != latestLogInput.format {
+				t.Fatalf("latest logged input format should have been %v, but was: %v",
+					testData.expectedLogInput.format,
+					latestLogInput.format,
+				)
+			}
+			for key, inputValue := range testData.expectedLogInput.v {
+				switch expected := inputValue.(type) {
+				case *os.PathError:
+					loggedPathError := latestLogInput.v[key].(*os.PathError)
+					if expected.Path != loggedPathError.Path {
+						t.Fatalf("PathError.Path should have been %v, but was: %v", expected.Path, loggedPathError.Path)
+					}
+					if expected.Op != loggedPathError.Op {
+						t.Fatalf("PathError.Op should have been %v, but was: %v", expected.Op, loggedPathError.Op)
+					}
+					if expected.Err.Error() != loggedPathError.Err.Error() {
+						t.Fatalf("PathError.Err.Error() should have been %v, but was: %v", expected.Err.Error(), loggedPathError.Err.Error())
+					}
+				}
 			}
 		})
 	}
+}
+
+type loggerInput struct {
+	format string
+	v      []interface{}
+}
+
+type loggerMock struct {
+	printfInputs []loggerInput
+	fatalfInputs []loggerInput
+}
+
+func (l *loggerMock) Printf(format string, v ...interface{}) {
+	l.printfInputs = append(l.printfInputs, loggerInput{format: format, v: v})
+}
+
+func (l *loggerMock) Fatalf(format string, v ...interface{}) {
+	l.fatalfInputs = append(l.fatalfInputs, loggerInput{format: format, v: v})
+}
+
+func (l *loggerMock) GetLatestPrintf() loggerInput {
+	if len(l.printfInputs) == 0 {
+		return loggerInput{}
+	}
+
+	return l.printfInputs[len(l.printfInputs)-1]
 }
 
 func cleanupTestDir(t *testing.T, testDir string) {
