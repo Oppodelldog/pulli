@@ -20,8 +20,8 @@ func ValidateFlags(searchRoot string, filterMode string, filters []string) bool 
 		return false
 	}
 
-	if len(filters) > 0 && filterMode != filterModeWhiteList && filterMode != filterModeBlackList {
-		log.Printf("filtermode must be either '%s' or '%s'", filterModeWhiteList, filterModeBlackList)
+	if len(filters) > 0 && filterMode != FilterModeWhiteList && filterMode != FilterModeBlackList {
+		log.Printf("filtermode must be either '%s' or '%s'", FilterModeWhiteList, FilterModeBlackList)
 		return false
 	}
 

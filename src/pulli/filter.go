@@ -4,13 +4,13 @@ import (
 	"regexp"
 )
 
-const filterModeWhiteList = "whitelist"
-const filterModeBlackList = "blacklist"
+const FilterModeWhiteList = "whitelist"
+const FilterModeBlackList = "blacklist"
 
 func newFilter(filters []string, filterMode string) *filter {
 
 	if filterMode == "" {
-		filterMode = filterModeBlackList
+		filterMode = FilterModeBlackList
 	}
 
 	regExFilters := buildRegExMatchers(filters)
@@ -30,7 +30,7 @@ type filter struct {
 
 func (f *filter) isAllowed(path string) bool {
 	isPathMatching := f.isPathMatchingFilter(path)
-	return (isPathMatching && f.filterMode == filterModeWhiteList) || (!isPathMatching && f.filterMode == filterModeBlackList)
+	return (isPathMatching && f.filterMode == FilterModeWhiteList) || (!isPathMatching && f.filterMode == FilterModeBlackList)
 }
 
 func (f *filter) isPathMatchingFilter(path string) bool {

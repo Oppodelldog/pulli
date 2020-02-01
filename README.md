@@ -68,6 +68,15 @@ When a repo is found and it passed the filters a **git pull** is executed.
 
 So the only change that might be made to the working tree could be a **fast-forward merge** from ```git pull```.
 
+### Build-Command
+Build-Command is a sub-command that helps you to staying a lazy developer.  
+It will iterate through all repositories, asking to include them.  
+The output will be the possible pulli command calls.  
+```bash
+Usage of pulli build-command:
+  -dir string
+    	defines the folder where to find git repos (default ".")
+```
 
 ### fun fact
 to reveal the facepalming introduction:

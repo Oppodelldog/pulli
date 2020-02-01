@@ -46,13 +46,13 @@ func TestValidateFlags(t *testing.T) {
 		"searchRoot is valid and filemode (whitelist) is allowed": {
 			searchRoot:     testDir,
 			filters:        []string{"some-filter"},
-			filterMode:     filterModeWhiteList,
+			filterMode:     FilterModeWhiteList,
 			expectedResult: true,
 		},
 		"searchRoot is valid and filemode (blacklist) is allowed": {
 			searchRoot:     testDir,
 			filters:        []string{"some-filter"},
-			filterMode:     filterModeBlackList,
+			filterMode:     FilterModeBlackList,
 			expectedResult: true,
 		},
 	}

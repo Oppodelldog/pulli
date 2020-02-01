@@ -8,13 +8,18 @@ import (
 	"github.com/Oppodelldog/pulli/src/git"
 )
 
+const CommandName = "pulli"
+const ArgNameDir = "dir"
+const ArgNameFilter = "filter"
+const ArgNameFilterMode = "filtermode"
+const SubCommandNameBuildCommand = "build-command"
+
 // PullAll finds git repositories and pulls if the filters allow to.
 func PullAll(searchRoot string, filters []string, filterMode string) {
 
 	filter := newFilter(filters, filterMode)
 
 	err := filepath.Walk(searchRoot, func(path string, info os.FileInfo, err error) error {
-
 		if repoDir, ok := checkForGitRepoDir(path); ok {
 			if filter.isAllowed(repoDir) {
 				pullRepo(repoDir)
