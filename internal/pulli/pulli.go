@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Oppodelldog/pulli/src/git"
+	"github.com/Oppodelldog/pulli/internal/git"
 )
 
 const CommandName = "pulli"
@@ -16,7 +16,6 @@ const SubCommandNameBuildCommand = "build-command"
 
 // PullAll finds git repositories and pulls if the filters allow to.
 func PullAll(searchRoot string, filters []string, filterMode string) {
-
 	filter := newFilter(filters, filterMode)
 
 	err := filepath.Walk(searchRoot, func(path string, info os.FileInfo, err error) error {
@@ -35,9 +34,9 @@ func PullAll(searchRoot string, filters []string, filterMode string) {
 }
 
 func pullRepo(repoDir string) {
-
 	log.Printf("pulling %v", repoDir)
 	branchName, err := git.GetCurrentBranchName(repoDir)
+
 	if err != nil {
 		log.Printf("unable top read branch name: %v", err)
 		return
@@ -47,6 +46,7 @@ func pullRepo(repoDir string) {
 	if err != nil {
 		log.Printf("%s: error while pulling: %v :%v", branchName, err, truncateString(result, 50))
 		log.Printf("%s: %v", branchName, result)
+
 		return
 	}
 

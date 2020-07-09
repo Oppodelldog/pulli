@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+//nolint:funlen
 func TestHelper_truncateString(t *testing.T) {
 	testDataSet := map[string]struct {
 		input    string

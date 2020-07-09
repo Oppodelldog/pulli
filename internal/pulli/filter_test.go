@@ -8,6 +8,7 @@ import (
 func TestFilter_newFilter(t *testing.T) {
 	expected := reflect.ValueOf(&filter{}).Type()
 	got := reflect.ValueOf(newFilter([]string{}, FilterModeBlackList)).Type()
+
 	if expected != got {
 		t.Fatalf("expected newFilte to return %T, but got: %T", expected, got)
 	}
@@ -21,6 +22,7 @@ func TestFilter_newFilter_emptyFilterMode_defaultsToBlacklist(t *testing.T) {
 	}
 }
 
+//nolint:funlen
 func TestFilter_isAllowed(t *testing.T) {
 	testDataSet := map[string]struct {
 		expectation    string

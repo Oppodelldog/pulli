@@ -8,7 +8,6 @@ const FilterModeWhiteList = "whitelist"
 const FilterModeBlackList = "blacklist"
 
 func newFilter(filters []string, filterMode string) *filter {
-
 	if filterMode == "" {
 		filterMode = FilterModeBlackList
 	}
@@ -30,7 +29,9 @@ type filter struct {
 
 func (f *filter) isAllowed(path string) bool {
 	isPathMatching := f.isPathMatchingFilter(path)
-	return (isPathMatching && f.filterMode == FilterModeWhiteList) || (!isPathMatching && f.filterMode == FilterModeBlackList)
+
+	return (isPathMatching && f.filterMode == FilterModeWhiteList) ||
+		(!isPathMatching && f.filterMode == FilterModeBlackList)
 }
 
 func (f *filter) isPathMatchingFilter(path string) bool {
@@ -38,7 +39,6 @@ func (f *filter) isPathMatchingFilter(path string) bool {
 }
 
 func (f *filter) isPathMatchingRegExMatcher(path string) bool {
-
 	for _, matcher := range f.regExFilters {
 		if matcher.MatchString(path) {
 			return true
@@ -59,7 +59,7 @@ func (f *filter) isPathMatchingString(path string) bool {
 }
 
 func buildRegExMatchers(patterns []string) []*regexp.Regexp {
-	var regExMatcher []*regexp.Regexp
+	var regExMatcher []*regexp.Regexp //nolint:prealloc
 	for _, pattern := range patterns {
 		regExMatcher = append(regExMatcher, regexp.MustCompile(pattern))
 	}

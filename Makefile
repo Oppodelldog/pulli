@@ -15,7 +15,7 @@ test: ## Run all the tests
 
 build: ## build binary to .build folder
 	rm -f .build/*
-	go build -o ".build/pulli" src/cmd/main.go
+	go build -o ".build/pulli" cmd/main.go
 
 install: ## Install to <gopath>/src
 	go install ./...

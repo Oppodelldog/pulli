@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/Oppodelldog/pulli/log"
+	"github.com/Oppodelldog/pulli/internal/log"
 )
 
 const defaultExecutionTimeout = 20 * time.Second

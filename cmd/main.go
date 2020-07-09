@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Oppodelldog/pulli/src/pulli"
-	"github.com/Oppodelldog/pulli/src/version"
+	"github.com/Oppodelldog/pulli/internal/pulli"
+	"github.com/Oppodelldog/pulli/internal/version"
 
 	"os"
 )

@@ -9,8 +9,10 @@ import (
 )
 
 func BuildCommand(searchRoot string) {
-	var whitelist []string
-	var blacklist []string
+	var (
+		whitelist []string
+		blacklist []string
+	)
 
 	err := filepath.Walk(searchRoot, func(path string, info os.FileInfo, err error) error {
 		if repoDir, ok := checkForGitRepoDir(path); ok {
@@ -40,10 +42,12 @@ func BuildCommand(searchRoot string) {
 	blacklistFilters := mapRepoDirsToFilterArguments(blacklist)
 
 	fmt.Printf("\n\nfrom the given information I can suggest the following commands:\n\n")
+
 	if len(whitelistFilters) > 0 {
 		fmt.Printf("%s:\n\n", FilterModeWhiteList)
 		printCommand(absoluteProjectsFolder, FilterModeWhiteList, whitelistFilters)
 	}
+
 	if len(blacklistFilters) > 0 {
 		fmt.Printf("%s:\n\n", FilterModeBlackList)
 		printCommand(absoluteProjectsFolder, FilterModeBlackList, blacklistFilters)
@@ -63,6 +67,7 @@ func printCommand(absoluteProjectsFolder, mode string, filters []string) {
 
 func shallBeIncluded(repoPath string) bool {
 	fmt.Printf("Include %s [Y/n]: ", repoPath)
+
 	reader := bufio.NewReader(os.Stdin)
 	char, _, err := reader.ReadRune()
 

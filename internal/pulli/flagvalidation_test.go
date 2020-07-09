@@ -6,13 +6,15 @@ import (
 	"path"
 	"testing"
 
-	"github.com/Oppodelldog/pulli/log"
+	"github.com/Oppodelldog/pulli/internal/log"
 )
 
+//nolint:funlen
 func TestValidateFlags(t *testing.T) {
 	const testDir = "/tmp/pulli/flagvalidation"
 	testFile := path.Join(testDir, "testFile")
 	prepareTestDir(t, testDir, testFile)
+
 	defer cleanupTestDir(t, testDir)
 
 	testCases := map[string]struct {
@@ -23,9 +25,15 @@ func TestValidateFlags(t *testing.T) {
 		expectedLogInput loggerInput
 	}{
 		"searchRoot does not exist": {
-			searchRoot:       "/DOES-NOT_EXIST",
-			expectedLogInput: loggerInput{format: "error investigating -dir '%s': %v", v: []interface{}{"/DOES-NOT_EXIST", &os.PathError{Op: "stat", Path: "/DOES-NOT_EXIST", Err: errors.New("no such file or directory")}}},
-			expectedResult:   false,
+			searchRoot: "/DOES-NOT_EXIST",
+			expectedLogInput: loggerInput{
+				format: "error investigating -dir '%s': %v",
+				v: []interface{}{
+					"/DOES-NOT_EXIST",
+					&os.PathError{Op: "stat", Path: "/DOES-NOT_EXIST",
+						Err: errors.New("no such file or directory")}},
+			},
+			expectedResult: false,
 		},
 		"searchRoot is no directory": {
 			searchRoot:       testFile,
@@ -37,11 +45,14 @@ func TestValidateFlags(t *testing.T) {
 			expectedResult: true,
 		},
 		"searchRoot is valid, with filter set, empty filemode is not allowed": {
-			searchRoot:       testDir,
-			filters:          []string{"some-filter"},
-			filterMode:       "",
-			expectedLogInput: loggerInput{format: "filtermode must be either '%s' or '%s'", v: []interface{}{"/tmp/pulli/flagvalidation/testFile"}},
-			expectedResult:   false,
+			searchRoot: testDir,
+			filters:    []string{"some-filter"},
+			filterMode: "",
+			expectedLogInput: loggerInput{
+				format: "filtermode must be either '%s' or '%s'",
+				v:      []interface{}{"/tmp/pulli/flagvalidation/testFile"},
+			},
+			expectedResult: false,
 		},
 		"searchRoot is valid and filemode (whitelist) is allowed": {
 			searchRoot:     testDir,
@@ -77,18 +88,31 @@ func TestValidateFlags(t *testing.T) {
 				)
 			}
 			for key, inputValue := range testData.expectedLogInput.v {
-				switch expected := inputValue.(type) {
-				case *os.PathError:
-					loggedPathError := latestLogInput.v[key].(*os.PathError)
-					if expected.Path != loggedPathError.Path {
-						t.Fatalf("PathError.Path should have been %v, but was: %v", expected.Path, loggedPathError.Path)
-					}
-					if expected.Op != loggedPathError.Op {
-						t.Fatalf("PathError.Op should have been %v, but was: %v", expected.Op, loggedPathError.Op)
-					}
-					if expected.Err.Error() != loggedPathError.Err.Error() {
-						t.Fatalf("PathError.Err.Error() should have been %v, but was: %v", expected.Err.Error(), loggedPathError.Err.Error())
-					}
+				expected, ok := inputValue.(*os.PathError)
+				if !ok {
+					continue
+				}
+
+				loggedPathError := latestLogInput.v[key].(*os.PathError)
+				if expected.Path != loggedPathError.Path {
+					t.Fatalf("PathError.Path should have been %v, but was: %v",
+						expected.Path,
+						loggedPathError.Path,
+					)
+				}
+
+				if expected.Op != loggedPathError.Op {
+					t.Fatalf("PathError.Op should have been %v, but was: %v",
+						expected.Op,
+						loggedPathError.Op,
+					)
+				}
+
+				if expected.Err.Error() != loggedPathError.Err.Error() {
+					t.Fatalf("PathError.Err.Error() should have been %v, but was: %v",
+						expected.Err.Error(),
+						loggedPathError.Err.Error(),
+					)
 				}
 			}
 		})

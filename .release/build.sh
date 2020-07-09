@@ -22,10 +22,11 @@ else
 fi
 
 target_folder=".release"
-package="github.com/Oppodelldog/pulli/src/cmd"
+package="github.com/Oppodelldog/pulli/cmd"
 ldflags=-ldflags="-X github.com/Oppodelldog/pulli/src/version.Number=${tag}"
 
 package_split=(${package//\// })
+
 
 
 platforms=("linux/amd64" "windows/amd64" "windows/386" "linux/arm/7")

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Oppodelldog/pulli/src/pulli"
+	"github.com/Oppodelldog/pulli/internal/pulli"
 )
 
 func restoreOriginals() func() {
