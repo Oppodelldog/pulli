@@ -64,7 +64,7 @@ A: "It pulls"
 
 Pulli walks through the filesystem searching for git repositories.
 
-When a repo is found and it passed the filters a **git pull** is executed.
+When a repo has been found, and it passed the filters a **git pull** is executed.
 
 So the only change that might be made to the working tree could be a **fast-forward merge** from ```git pull```.
 
