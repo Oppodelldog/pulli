@@ -8,10 +8,6 @@ fmt: ## gofmt and goimports all go files
 lint: ## Run the linters
 	golangci-lint run
 
-test-with-coverage: ## Run all the tests
-	rm -f coverage.tmp && rm -f coverage.txt
-	echo 'mode: atomic' > coverage.txt && go list ./... | xargs -n1 -I{} sh -c 'go test -race -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt' && rm coverage.tmp
-
 test: ## Run all the tests
 	go version
 	go env

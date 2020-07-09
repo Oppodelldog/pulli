@@ -9,4 +9,4 @@ os:
 go_import_path: github.com/Oppodelldog/pulli
 
 script:
-  - make test-with-coverage 
+  - make test
