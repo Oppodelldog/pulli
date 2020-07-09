@@ -1,6 +1,7 @@
 package pulli
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -50,7 +51,10 @@ func pullRepo(repoDir string) {
 		return
 	}
 
-	log.Printf("%s: pulled", branchName)
+	stats := git.GetStats(result)
+	statsString := fmt.Sprintf(" f: %v +%v -%v", stats.Files, stats.Insertions, stats.Deletions)
+
+	log.Printf("%s: pulled (%s)", branchName, statsString)
 }
 
 func checkForGitRepoDir(path string) (string, bool) {
