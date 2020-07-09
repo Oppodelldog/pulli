@@ -102,7 +102,7 @@ func TestGetCurrentBranchName_ExpectGitCommandIsCalledProperly(t *testing.T) {
 		return exec.Command("", "")
 	}
 
-	GetCurrentBranchName("test-folder")
+	_, _ = GetCurrentBranchName("test-folder")
 }
 
 func TestGetCurrentBranchName_ReturnsErrorFromOneOfBothPossibleCommandExecutions(t *testing.T) {

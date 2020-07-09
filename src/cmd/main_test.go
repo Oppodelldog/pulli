@@ -82,6 +82,7 @@ func (m *pulliPullAllFuncMock) pullAll(searchRoot string, filters []string, filt
 	m.pulliFuncWasCalled = true
 }
 
+//nolint:funlen
 func TestPullAll(t *testing.T) {
 	defer restoreOriginals()()
 
