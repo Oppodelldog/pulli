@@ -8,7 +8,7 @@ import (
 	"github.com/Oppodelldog/pulli/src/pulli"
 )
 
-func restoreOriginalFuncs() func() {
+func restoreOriginals() func() {
 	originalOsArgsProvider := osArgsProvider
 	originalBuildCommand := buildCommand
 	originalPullAll := pullAll
@@ -29,7 +29,7 @@ func restoreOriginalFuncs() func() {
 }
 
 func TestMainCallsPulli(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	wasPullAllCalled := false
 
@@ -49,7 +49,7 @@ func TestMainCallsPulli(t *testing.T) {
 }
 
 func TestMainCallsBuildCommand(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	wasBuildCommandCalled := false
 
@@ -83,7 +83,7 @@ func (m *pulliPullAllFuncMock) pullAll(searchRoot string, filters []string, filt
 }
 
 func TestPullAll(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	testCases := map[string]struct {
 		inputArgs          []string
@@ -91,24 +91,36 @@ func TestPullAll(t *testing.T) {
 		expectedFilters    []string
 		expectedFilterMode string
 	}{
-		"no args": {inputArgs: []string{pulli.CommandName}, expectedSearchRoot: "."},
+		"no args": {inputArgs: []string{
+			pulli.CommandName}, expectedSearchRoot: ".",
+		},
 		"-dir": {
-			inputArgs:          []string{pulli.CommandName, "-dir=some-dir"},
+			inputArgs: []string{
+				pulli.CommandName, "-dir=some-dir",
+			},
 			expectedSearchRoot: "some-dir"},
 		"-filterMode=whitelist": {
-			inputArgs:          []string{pulli.CommandName, "-" + pulli.ArgNameFilterMode + "=" + pulli.FilterModeWhiteList},
+			inputArgs: []string{
+				pulli.CommandName, "-" + pulli.ArgNameFilterMode + "=" + pulli.FilterModeWhiteList,
+			},
 			expectedSearchRoot: ".",
 			expectedFilterMode: pulli.FilterModeWhiteList},
 		"-filterMode=blacklist": {
-			inputArgs:          []string{pulli.CommandName, "-" + pulli.ArgNameFilterMode + "=" + pulli.FilterModeBlackList},
+			inputArgs: []string{
+				pulli.CommandName, "-" + pulli.ArgNameFilterMode + "=" + pulli.FilterModeBlackList,
+			},
 			expectedSearchRoot: ".",
 			expectedFilterMode: pulli.FilterModeBlackList},
 		"-filter=test1": {
-			inputArgs:          []string{pulli.CommandName, "-" + pulli.ArgNameFilter + "=test1"},
+			inputArgs: []string{
+				pulli.CommandName, "-" + pulli.ArgNameFilter + "=test1",
+			},
 			expectedSearchRoot: ".",
 			expectedFilters:    []string{"test1"}},
 		"-filter=test1 -filter=test2": {
-			inputArgs:          []string{pulli.CommandName, "-" + pulli.ArgNameFilter + "=test1", "-" + pulli.ArgNameFilter + "=test2"},
+			inputArgs: []string{
+				pulli.CommandName, "-" + pulli.ArgNameFilter + "=test1", "-" + pulli.ArgNameFilter + "=test2",
+			},
 			expectedSearchRoot: ".",
 			expectedFilters:    []string{"test1", "test2"}},
 		"all parameters": {
@@ -134,23 +146,32 @@ func TestPullAll(t *testing.T) {
 			pullAll(testData.inputArgs)
 
 			if testData.expectedFilterMode != mock.parmFilterMode {
-				t.Fatalf("expected pullAll was called with filterMode='%s', but was '%s'", testData.expectedFilterMode, mock.parmFilterMode)
+				t.Fatalf("expected pullAll was called with filterMode='%s', but was '%s'",
+					testData.expectedFilterMode,
+					mock.parmFilterMode,
+				)
 			}
 			if testData.expectedSearchRoot != mock.parmSearchRoot {
-				t.Fatalf("expected pullAll was called with searchRoot='%s', but was '%s'", testData.expectedSearchRoot, mock.parmSearchRoot)
+				t.Fatalf("expected pullAll was called with searchRoot='%s', but was '%s'",
+					testData.expectedSearchRoot,
+					mock.parmSearchRoot,
+				)
 			}
 			if !reflect.DeepEqual(testData.expectedFilters, mock.parmFilters) {
-				t.Fatalf("expected pullAll was called with filters='%#v', but was '%#v'", testData.expectedFilters, mock.parmFilters)
+				t.Fatalf("expected pullAll was called with filters='%#v', but was '%#v'",
+					testData.expectedFilters,
+					mock.parmFilters,
+				)
 			}
 		})
 	}
 }
 
 type pulliValidateMock struct {
-	pulliFuncWasCalled bool
-	parmSearchRoot     string
 	parmFilters        []string
+	parmSearchRoot     string
 	parmFilterMode     string
+	pulliFuncWasCalled bool
 	returnValue        bool
 }
 
@@ -164,7 +185,7 @@ func (m *pulliValidateMock) validate(searchRoot string, filterMode string, filte
 }
 
 func TestPullAllCallsValidate(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	testCases := map[string]struct {
 		inputArgs          []string
@@ -194,13 +215,22 @@ func TestPullAllCallsValidate(t *testing.T) {
 			pullAll(testData.inputArgs)
 
 			if testData.expectedFilterMode != mock.parmFilterMode {
-				t.Fatalf("expected pullAll was called with filterMode='%s', but was '%s'", testData.expectedFilterMode, mock.parmFilterMode)
+				t.Fatalf("expected pullAll was called with filterMode='%s', but was '%s'",
+					testData.expectedFilterMode,
+					mock.parmFilterMode,
+				)
 			}
 			if testData.expectedSearchRoot != mock.parmSearchRoot {
-				t.Fatalf("expected pullAll was called with searchRoot='%s', but was '%s'", testData.expectedSearchRoot, mock.parmSearchRoot)
+				t.Fatalf("expected pullAll was called with searchRoot='%s', but was '%s'",
+					testData.expectedSearchRoot,
+					mock.parmSearchRoot,
+				)
 			}
 			if !reflect.DeepEqual(testData.expectedFilters, mock.parmFilters) {
-				t.Fatalf("expected pullAll was called with filters='%#v', but was '%#v'", testData.expectedFilters, mock.parmFilters)
+				t.Fatalf("expected pullAll was called with filters='%#v', but was '%#v'",
+					testData.expectedFilters,
+					mock.parmFilters,
+				)
 			}
 		})
 	}
@@ -217,7 +247,7 @@ func (m *programExitMock) exit(code int) {
 }
 
 func TestPullAllValidationFailsProgrammWillExit(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	pullAllFuncMock := new(pulliPullAllFuncMock)
 	exitCodeMock := new(programExitMock)
@@ -235,7 +265,7 @@ func TestPullAllValidationFailsProgrammWillExit(t *testing.T) {
 }
 
 func TestPullAllValidationSucceedsPulliPullAllIsCalled(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	pullAllFuncMock := new(pulliPullAllFuncMock)
 	exitCodeMock := new(programExitMock)
@@ -253,7 +283,7 @@ func TestPullAllValidationSucceedsPulliPullAllIsCalled(t *testing.T) {
 }
 
 func TestPullUnknownArgumentLeadsToProgramExit(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	pullAllFuncMock := new(pulliPullAllFuncMock)
 	exitCodeMock := new(programExitMock)
@@ -268,13 +298,14 @@ func TestPullUnknownArgumentLeadsToProgramExit(t *testing.T) {
 	if !exitCodeMock.wasCalled {
 		t.Fatalf("unknown argument program should have quit")
 	}
+
 	if pullAllFuncMock.pulliFuncWasCalled {
 		t.Fatalf("unknown argument, pulliPullAllFunc should not have been called")
 	}
 }
 
 func TestBuildCommand(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	pulliFuncWasCalled := false
 	pulliFuncSearchRootParameter := ""
@@ -291,13 +322,14 @@ func TestBuildCommand(t *testing.T) {
 	if !pulliFuncWasCalled {
 		t.Fatalf("expected pulliFuncWasCalled was called, but it was not")
 	}
+
 	if pulliFuncSearchRootParameter != "." {
 		t.Fatalf("expected pulliFuncWasCalled was called with searchRoot='.', but it was '%s'", pulliFuncSearchRootParameter)
 	}
 }
 
 func TestBuildCommandWithDirParameter(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	pulliFuncWasCalled := false
 	pulliFuncSearchRootParameter := ""
@@ -316,13 +348,17 @@ func TestBuildCommandWithDirParameter(t *testing.T) {
 	if !pulliFuncWasCalled {
 		t.Fatalf("expected pulliFuncWasCalled was called, but it was not")
 	}
+
 	if pulliFuncSearchRootParameter != stubbedDir {
-		t.Fatalf("expected pulliFuncWasCalled was called with searchRoot='%s', but it was '%s'", stubbedDir, pulliFuncSearchRootParameter)
+		t.Fatalf("expected pulliFuncWasCalled was called with searchRoot='%s', but it was '%s'",
+			stubbedDir,
+			pulliFuncSearchRootParameter,
+		)
 	}
 }
 
 func TestBuildCommandExitsOnFlagError(t *testing.T) {
-	defer restoreOriginalFuncs()()
+	defer restoreOriginals()()
 
 	exitMock := &programExitMock{}
 	exitProgram = exitMock.exit

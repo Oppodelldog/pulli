@@ -26,12 +26,13 @@ package="github.com/Oppodelldog/pulli/src/cmd"
 ldflags=-ldflags="-X github.com/Oppodelldog/pulli/src/version.Number=${tag}"
 
 package_split=(${package//\// })
-output_name=pulli
+
 
 platforms=("linux/amd64" "windows/amd64" "windows/386" "linux/arm/7")
 
 for platform in "${platforms[@]}"
 do
+    output_name=pulli
     platform_split=(${platform//\// })
     GOOS=${platform_split[0]}
     GOARCH=${platform_split[1]}

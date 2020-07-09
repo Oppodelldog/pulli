@@ -6,7 +6,7 @@
 **Put your pulli on, it's getting cool.**
 
 It's always nice to have a pulli.
-Especially when
+Especially when:
 - you are a cool developer
 - your are working in a team of even cooler developers
 - all of you produce a lot of dependent git repositories
@@ -81,5 +81,5 @@ Usage of pulli build-command:
 ### fun fact
 to reveal the facepalming introduction:
 
-**pulli is the german colloquial for pullover**
+**pulli is the german colloquial for *pullover***
 

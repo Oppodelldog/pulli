@@ -30,7 +30,9 @@ func main() {
 	log.Printf("pulli (%v)", version.Number)
 
 	args := osArgsProvider()
-	if len(args) >= 2 {
+	subCommandIndicator := 2
+
+	if len(args) >= subCommandIndicator {
 		buildCommand(args)
 	} else {
 		pullAll(args)

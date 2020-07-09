@@ -24,7 +24,6 @@ func GetCurrentBranchName(directory string) (string, error) {
 }
 
 func getBranchNameFromGitOutput(gitOutput string) string {
-
 	return extractFromString(gitOutput, `(?m)^\* (.*)$`)
 }
 

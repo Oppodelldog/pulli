@@ -15,9 +15,9 @@ type execWithTimeoutFuncDef func(ctx context.Context, s1 string, s2 ...string) *
 var execFunc = execWithTimeoutFuncDef(exec.CommandContext)
 
 func git(dir string, s ...string) (string, error) {
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(defaultExecutionTimeout))
+	ctx, cancel := context.WithTimeout(context.Background(), defaultExecutionTimeout)
 	defer cancel()
+
 	defer func() {
 		err := ctx.Err()
 		if err != nil {
